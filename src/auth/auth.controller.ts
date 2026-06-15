@@ -40,7 +40,7 @@ export class AuthController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get('me')
-  me(@User() user: any) {
+  me(@User() user: UserPayload) {
     return user;
   }
 }

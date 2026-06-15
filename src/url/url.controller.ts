@@ -8,7 +8,7 @@ import {
   Body,
 } from '@nestjs/common';
 import { UrlService } from './url.service';
-import { CreateUrlDto } from './dto/url.dto';
+import { CreateUrlDto, UserPayload } from './dto/url.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from '../auth/decorator/user.decorator';
 import { Throttle } from '@nestjs/throttler';
@@ -25,8 +25,8 @@ export class UrlController {
       ttl: 60_000,
     },
   })
-  async create(@Body() url: CreateUrlDto, @User() user: any) {
-    return this.urlService.create(url, user.id);
+  async create(@Body() url: CreateUrlDto, @User() user: UserPayload) {
+    return this.urlService.create(url, user.sub);
   }
 
   @Get(':code')
@@ -42,7 +42,7 @@ export class UrlController {
       ttl: 60_000,
     },
   })
-  async delete(@Param('code') code: string, @User() user: any) {
-    return this.urlService.delete(code, user.id);
+  async delete(@Param('code') code: string, @User() user: UserPayload) {
+    return this.urlService.delete(code, user.sub);
   }
 }
