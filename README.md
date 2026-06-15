@@ -19,6 +19,23 @@
 
 ---
 
+## Rate Limiting
+
+This API implements rate limiting to prevent abuse and ensure fair usage:
+
+- **Global limit**: 100 requests per minute across all endpoints
+- **Authentication endpoints**:
+  - Sign up: 3 requests per minute
+  - Sign in: 5 requests per minute
+- **URL management endpoints**:
+  - Create short URL: 20 requests per minute
+  - Delete URL: 10 requests per minute
+- **Redirect endpoint**: Exempt from rate limiting to ensure smooth redirection
+
+Rate limits are implemented using NestJS Throttler module with different configurations for various route groups.
+
+---
+
 ## Tech Stack
 
 * NestJS
@@ -30,6 +47,7 @@
 * class-validator
 * class-transformer
 * nanoid
+* @nestjs/throttler
 
 ---
 
