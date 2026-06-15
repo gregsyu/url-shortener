@@ -49,6 +49,7 @@ Rate limits are implemented using NestJS Throttler module with different configu
 * nanoid
 * @nestjs/throttler
 * helmet
+* compression
 
 ---
 
