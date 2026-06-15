@@ -11,7 +11,7 @@ import { UrlService } from './url.service';
 import { CreateUrlDto, UserPayload } from './dto/url.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from '../auth/decorator/user.decorator';
-import { Throttle } from '@nestjs/throttler';
+import { Throttle, seconds } from '@nestjs/throttler';
 
 @Controller('url')
 export class UrlController {
@@ -22,7 +22,7 @@ export class UrlController {
   @Throttle({
     default: {
       limit: 20,
-      ttl: 60_000,
+      ttl: seconds(60),
     },
   })
   async create(@Body() url: CreateUrlDto, @User() user: UserPayload) {
@@ -39,7 +39,7 @@ export class UrlController {
   @Throttle({
     default: {
       limit: 10,
-      ttl: 60_000,
+      ttl: seconds(60),
     },
   })
   async delete(@Param('code') code: string, @User() user: UserPayload) {

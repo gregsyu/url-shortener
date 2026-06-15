@@ -6,7 +6,7 @@ import { AuthService } from './auth/auth.service';
 import { AuthController } from './auth/auth.controller';
 import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { seconds, ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 
 @Module({
@@ -19,7 +19,7 @@ import { APP_GUARD } from '@nestjs/core';
     PrismaModule,
     ThrottlerModule.forRoot([
       {
-        ttl: 60_000,
+        ttl: seconds(60),
         limit: 100,
       },
     ]),
