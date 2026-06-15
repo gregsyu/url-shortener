@@ -11,6 +11,7 @@ import { UrlService } from './url.service';
 import { CreateUrlDto } from './dto/url.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from '../auth/decorator/user.decorator';
+import { Throttle } from '@nestjs/throttler';
 
 @Controller('url')
 export class UrlController {
@@ -18,6 +19,12 @@ export class UrlController {
 
   @UseGuards(AuthGuard('jwt'))
   @Post()
+  @Throttle({
+    default: {
+      limit: 20,
+      ttl: 60_000,
+    },
+  })
   async create(@Body() url: CreateUrlDto, @User() user: any) {
     return this.urlService.create(url, user.id);
   }
@@ -29,6 +36,12 @@ export class UrlController {
 
   @UseGuards(AuthGuard('jwt'))
   @Delete(':code')
+  @Throttle({
+    default: {
+      limit: 10,
+      ttl: 60_000,
+    },
+  })
   async delete(@Param('code') code: string, @User() user: any) {
     return this.urlService.delete(code, user.id);
   }
