@@ -53,6 +53,66 @@ Rate limits are implemented using NestJS Throttler module with different configu
 
 ---
 
+## Run with Docker
+
+From a fresh clone:
+
+```bash
+git clone https://github.com/gregsyu/url-shortener.git
+cd url-shortener
+cp .env.example .env
+```
+
+Set `JWT_SECRET` in `.env`:
+
+```env
+JWT_SECRET="your-secret-key"
+```
+
+The Docker Compose file provides the container database URL automatically:
+
+```env
+DATABASE_URL="postgresql://postgres:postgres@db:5432/url_shortener"
+```
+
+
+```bash
+docker compose build                                   # build the app image
+docker compose up -d db                                # start the database
+docker compose run --rm app pnpm prisma migrate deploy # run database migrations
+docker compose up -d app                               # start the application:
+```
+
+> [!NOTE]
+> The API will be available at `http://localhost:3000`.
+
+---
+
+To stop the containers:
+
+```bash
+docker compose down
+```
+
+To remove the database volume as well:
+
+```bash
+docker compose down -v
+```
+
+### Production Docker Flow
+
+For production, keep migrations separate from application startup:
+
+```bash
+docker compose build
+docker compose up -d db
+docker compose run --rm app pnpm prisma migrate deploy
+docker compose up -d app
+```
+
+This avoids running schema changes on every app restart and makes migration failures explicit during deployment.
+
 ## Project Setup
 
 ### Install dependencies
