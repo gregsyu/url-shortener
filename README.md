@@ -67,6 +67,10 @@ Set `JWT_SECRET` in `.env`:
 
 ```env
 JWT_SECRET="your-secret-key"
+REDIS_URL="redis://redis:6379"
+POSTGRES_USER="postgres"
+POSTGRES_PASSWORD="postgres"
+POSTGRES_DB="url_shortener"
 ```
 
 The Docker Compose file provides the container database URL automatically:
@@ -128,6 +132,7 @@ Create a `.env` file:
 ```env
 DATABASE_URL="postgresql://postgres:password@localhost:5432/url_shortener"
 JWT_SECRET="your-secret-key"
+REDIS_URL="redis://localhost:6379"
 ```
 
 ### Database
