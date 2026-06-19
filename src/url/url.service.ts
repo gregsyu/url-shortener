@@ -80,6 +80,18 @@ export class UrlService {
     };
   }
 
+  async findAllByUser(userId: string, limit = 10) {
+    return this.prisma.url.findMany({
+      where: {
+        userId,
+      },
+      take: limit,
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+  }
+
   async delete(code: string, userId: string) {
     const url = await this.findByCode(code);
 

@@ -6,6 +6,7 @@ import {
   Param,
   UseGuards,
   Body,
+  Query,
 } from '@nestjs/common';
 import { UrlService } from './url.service';
 import { CreateUrlDto, UserPayload } from './dto/url.dto';
@@ -32,6 +33,12 @@ export class UrlController {
   @Get(':code')
   async getStats(@Param('code') code: string) {
     return this.urlService.getStats(code);
+  }
+
+  @Get()
+  @UseGuards(AuthGuard('jwt'))
+  findall(@User() user: UserPayload, @Query('limit') limit?: number) {
+    return this.urlService.findAllByUser(user.sub, Number(limit) || 10);
   }
 
   @UseGuards(AuthGuard('jwt'))
