@@ -32,7 +32,7 @@ This API implements rate limiting to prevent abuse and ensure fair usage:
   - Delete URL: 10 requests per minute
 - **Redirect endpoint**: Exempt from rate limiting to ensure smooth redirection
 
-Rate limits are implemented using NestJS Throttler module with different configurations for various route groups.
+Rate limits are implemented using NestJS Throttler module with Redis storage for different configurations for various route groups.
 
 ---
 
@@ -42,6 +42,7 @@ Rate limits are implemented using NestJS Throttler module with different configu
 * TypeScript
 * PostgreSQL
 * Prisma ORM
+* Redis
 * Passport JWT
 * bcrypt
 * class-validator
