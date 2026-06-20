@@ -1,16 +1,35 @@
 import {
   ConflictException,
   ForbiddenException,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateUrlDto } from './dto/url.dto';
+import { CreateUrlDto, UrlStats } from './dto/url.dto';
 import { nanoid } from 'nanoid';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
+import { days, seconds } from '@nestjs/throttler';
 
 @Injectable()
 export class UrlService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+  ) {}
+
+  private statsCacheKey(code: string) {
+    return `url:stats:${code}`;
+  }
+
+  private allUsersCacheKey(userId: string) {
+    return `url:users:${userId}`;
+  }
+
+  private redirectCacheKey(code: string) {
+    return `url:redirect:${code}`;
+  }
 
   async create(data: CreateUrlDto, userId: string) {
     let code = data.customCode;
@@ -40,6 +59,8 @@ export class UrlService {
       },
     });
 
+    await this.cacheManager.del(this.allUsersCacheKey(userId));
+
     return {
       ...url,
       shortUrl: `http://localhost:3000/${url.code}`,
@@ -59,7 +80,7 @@ export class UrlService {
   }
 
   async incrementClicks(code: string) {
-    return this.prisma.url.update({
+    const url = await this.prisma.url.update({
       where: { code },
       data: {
         clicks: {
@@ -67,29 +88,70 @@ export class UrlService {
         },
       },
     });
+
+    await this.cacheManager.del(this.statsCacheKey(code));
+
+    return url;
   }
 
   async getStats(code: string) {
+    const cacheKey = this.statsCacheKey(code);
+    const cached = await this.cacheManager.get<UrlStats>(cacheKey);
+
+    if (cached) {
+      return cached;
+    }
+
     const url = await this.findByCode(code);
 
-    return {
+    const stats: UrlStats = {
       code: url.code,
       originalUrl: url.original,
       clicks: url.clicks,
       createdAt: url.createdAt,
     };
+
+    await this.cacheManager.set(cacheKey, stats, seconds(30));
+
+    return stats;
   }
 
-  async findAllByUser(userId: string, limit = 10) {
-    return this.prisma.url.findMany({
+  async findAllByUser(userId: string) {
+    const cacheKey = this.allUsersCacheKey(userId);
+    const cached = await this.cacheManager.get(cacheKey);
+
+    if (cached) {
+      return cached;
+    }
+
+    const urls = await this.prisma.url.findMany({
       where: {
         userId,
       },
-      take: limit,
       orderBy: {
         createdAt: 'desc',
       },
     });
+
+    await this.cacheManager.set(cacheKey, urls, seconds(60));
+
+    return urls;
+  }
+
+  async redirect(code: string) {
+    const cacheKey = this.redirectCacheKey(code);
+    const cached = await this.cacheManager.get<string>(cacheKey);
+
+    if (cached) {
+      return cached;
+    }
+
+    const originalUrl = (await this.findByCode(code)).original;
+    await this.incrementClicks(code);
+
+    await this.cacheManager.set(cacheKey, originalUrl, days(30));
+
+    return originalUrl;
   }
 
   async delete(code: string, userId: string) {
@@ -99,8 +161,14 @@ export class UrlService {
       throw new ForbiddenException();
     }
 
-    return this.prisma.url.delete({
+    const deletedUrl = await this.prisma.url.delete({
       where: { code },
     });
+
+    await this.cacheManager.del(this.statsCacheKey(code));
+    await this.cacheManager.del(this.allUsersCacheKey(userId));
+    await this.cacheManager.del(this.redirectCacheKey(code));
+
+    return deletedUrl;
   }
 }

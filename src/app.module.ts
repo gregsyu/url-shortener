@@ -9,6 +9,8 @@ import { PrismaModule } from './prisma/prisma.module';
 import { seconds, ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
+import { CacheModule } from '@nestjs/cache-manager';
+import KeyvRedis from '@keyv/redis';
 
 @Module({
   imports: [
@@ -30,6 +32,14 @@ import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis'
             limit: 100,
           },
         ],
+      }),
+    }),
+    CacheModule.registerAsync({
+      isGlobal: true,
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        ttl: seconds(30),
+        stores: [new KeyvRedis(configService.getOrThrow<string>('REDIS_URL'))],
       }),
     }),
   ],

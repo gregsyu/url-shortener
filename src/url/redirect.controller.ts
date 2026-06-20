@@ -10,11 +10,8 @@ export class RedirectController {
   @Get(':code')
   @SkipThrottle()
   async redirect(@Param('code') code: string) {
-    const url = await this.urlService.findByCode(code);
-    await this.urlService.incrementClicks(code);
+    const url = await this.urlService.redirect(code);
 
-    return {
-      url: url.original,
-    };
+    return { url };
   }
 }

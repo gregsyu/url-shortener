@@ -1,4 +1,11 @@
-import { IsOptional, IsString, IsUrl, Length, IsEmail } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  IsUrl,
+  Length,
+  IsEmail,
+  IsDate,
+} from 'class-validator';
 
 export class CreateUrlDto {
   @IsUrl({
@@ -17,4 +24,17 @@ export class UserPayload {
   email!: string;
 
   sub!: string;
+}
+
+export class UrlStats {
+  @IsString()
+  code!: string;
+
+  @IsString()
+  originalUrl!: string;
+
+  clicks!: number;
+
+  @IsDate()
+  createdAt!: Date;
 }
