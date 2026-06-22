@@ -81,8 +81,8 @@ importers:
         specifier: ^5.6.0
         version: 5.6.0
       nanoid:
-        specifier: ^5.1.11
-        version: 5.1.11
+        specifier: ^4.0.2
+        version: 4.0.2
       passport-jwt:
         specifier: ^4.0.1
         version: 4.0.1
@@ -2850,9 +2850,9 @@ packages:
     resolution: {integrity: sha512-Tz09sEL2EEuv5fFowm419c1+a/jSMiBjI9gHxVLrVdbUkkNUUfjsVYs9pVZu5oCon/kmRh9TfLEObFtkVxmY0w==}
     engines: {node: '>=8.0.0'}
 
-  nanoid@5.1.11:
-    resolution: {integrity: sha512-v+KEsUv2ps74PaSKv0gHTxTCgMXOIfBEbaqa6w6ISIGC7ZsvHN4N9oJ8d4cmf0n5oTzQz2SLmThbQWhjd/8eKg==}
-    engines: {node: ^18 || >=20}
+  nanoid@4.0.2:
+    resolution: {integrity: sha512-7ZtY5KTCNheRGfEFxnedV5zFiORN1+Y1N6zvPTnHQd8ENUvfaDBeuJDZb2bN/oXwXxu3qkTXDzy57W5vAmDTBw==}
+    engines: {node: ^14 || ^16 || >=18}
     hasBin: true
 
   napi-postinstall@0.3.4:
@@ -6855,7 +6855,7 @@ snapshots:
     dependencies:
       lru.min: 1.1.4
 
-  nanoid@5.1.11: {}
+  nanoid@4.0.2: {}
 
   napi-postinstall@0.3.4: {}
 
