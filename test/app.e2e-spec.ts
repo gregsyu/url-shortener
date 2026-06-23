@@ -44,6 +44,23 @@ describe('App (e2e)', () => {
     await app.close();
   });
 
+  it('should reject UNAUTHENTICATED create', async () => {
+    await request(app.getHttpServer())
+      .post('/url')
+      .send({
+        url: 'https://google.com',
+      })
+      .expect(401);
+  });
+
+  it('should reject UNAUTHENTICATED delete', async () => {
+    await request(app.getHttpServer()).delete(`/url/${code}`).expect(401);
+  });
+
+  it('should reject UNAUTHENTICATED get /url', async () => {
+    await request(app.getHttpServer()).get(`/url`).expect(401);
+  });
+
   it('POST /auth/signup', async () => {
     const response = await request(app.getHttpServer())
       .post('/auth/signup')
