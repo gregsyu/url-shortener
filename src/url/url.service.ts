@@ -10,7 +10,7 @@ import { CreateUrlDto, UrlStats } from './dto/url.dto';
 import { nanoid } from 'nanoid';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
-import { days, seconds } from '@nestjs/throttler';
+import { minutes } from '@nestjs/throttler';
 
 @Injectable()
 export class UrlService {
@@ -25,10 +25,6 @@ export class UrlService {
 
   private allUsersCacheKey(userId: string) {
     return `url:users:${userId}`;
-  }
-
-  private redirectCacheKey(code: string) {
-    return `url:redirect:${code}`;
   }
 
   async create(data: CreateUrlDto, userId: string) {
@@ -111,7 +107,7 @@ export class UrlService {
       createdAt: url.createdAt,
     };
 
-    await this.cacheManager.set(cacheKey, stats, seconds(30));
+    await this.cacheManager.set(cacheKey, stats, minutes(5));
 
     return stats;
   }
@@ -133,23 +129,14 @@ export class UrlService {
       },
     });
 
-    await this.cacheManager.set(cacheKey, urls, seconds(60));
+    await this.cacheManager.set(cacheKey, urls, minutes(5));
 
     return urls;
   }
 
   async redirect(code: string) {
-    const cacheKey = this.redirectCacheKey(code);
-    const cached = await this.cacheManager.get<string>(cacheKey);
-
-    if (cached) {
-      return cached;
-    }
-
     const originalUrl = (await this.findByCode(code)).original;
     await this.incrementClicks(code);
-
-    await this.cacheManager.set(cacheKey, originalUrl, days(30));
 
     return originalUrl;
   }
@@ -167,7 +154,6 @@ export class UrlService {
 
     await this.cacheManager.del(this.statsCacheKey(code));
     await this.cacheManager.del(this.allUsersCacheKey(userId));
-    await this.cacheManager.del(this.redirectCacheKey(code));
 
     return deletedUrl;
   }
