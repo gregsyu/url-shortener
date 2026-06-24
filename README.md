@@ -11,10 +11,11 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/TypeScript-5.x-blue" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/TypeScript-6.x-blue" alt="TypeScript" />
   <img src="https://img.shields.io/badge/NestJS-11.x-red" alt="NestJS" />
   <img src="https://img.shields.io/badge/Prisma-7.x-2D3748" alt="Prisma" />
-  <img src="https://img.shields.io/badge/PostgreSQL-16-blue" alt="PostgreSQL" />
+  <img src="https://img.shields.io/badge/PostgreSQL-17-blue" alt="PostgreSQL" />
+  <img src="https://img.shields.io/badge/Redis-8-darkred" alt="Redis" />
 </p>
 
 ---
