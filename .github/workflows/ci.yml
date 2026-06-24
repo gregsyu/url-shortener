@@ -26,9 +26,19 @@ jobs:
           --health-retries=5
         ports:
           - 5432:5432
+      redis:
+        image: redis:8
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     env:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/url_shortener_test
+      REDIS_URL: redis://localhost:6379
       JWT_SECRET: secret-key-test
       CI: true
     steps:
