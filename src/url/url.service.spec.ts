@@ -209,7 +209,7 @@ describe('UrlService tests', () => {
       const result = await service.delete('abc', 'user1');
 
       expect(result.code).toBe('abc');
-      expect(cacheMock.del).toHaveBeenCalledTimes(3);
+      expect(cacheMock.del).toHaveBeenCalledTimes(2);
     });
 
     it('should throw when user is not owner', async () => {
