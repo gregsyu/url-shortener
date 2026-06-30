@@ -89,6 +89,13 @@ docker compose run --rm app pnpm prisma migrate deploy # run database migrations
 docker compose up -d app                               # start the application:
 ```
 
+> [!TIP]
+> You can also run Prisma Studio to visually manage your database:
+> ```bash
+> docker compose up -d prisma-studio
+> ```
+> Then visit `http://localhost:51212` to access Prisma Studio interface.
+
 > [!NOTE]
 > The API will be available at `http://localhost:3000`.
 
